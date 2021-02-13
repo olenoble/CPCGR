@@ -1,9 +1,6 @@
 from urllib import request
-import requests
-import json
-from datetime import datetime
 import logging
-from pprint import pprint
+# from pprint import pprint
 import pandas as pd
 
 
@@ -22,7 +19,8 @@ class ParseCPCGR:
         self.all_paths = [self.root_path % chr(ord('a') + i) for i in range(26)]
         self.reviews = None
 
-    def extractRange(self, data, tag, tagval=None):
+    @staticmethod
+    def extractRange(data, tag, tagval=None):
         taglng = '<%s' % tag + (' %s>' % tagval if tagval else '>')
         part = data.split(taglng)        
         part = part if len(part) > 1 else ['', '']
@@ -95,7 +93,8 @@ class ParseCPCGR:
         game_info = self.extractRange(review, 'div', 'class="gamedetails"')
         game_info_dict = self.htmlToDict(game_info)
         score = self.htmlToDict(self.extractRange(review, 'p', 'class="rating"'))
-        score = score if score['nontag'] else self.htmlToDict(self.extractRange(review, 'p', 'class="rating no-line-break"'))
+        score = score if score['nontag'] else self.htmlToDict(self.extractRange(review, 'p',
+                                                                                'class="rating no-line-break"'))
 
         publ = self.replaceSym(game_info_dict['publisher']['value'], {'(': '', ')': ''})
         publ = publ.split(',')
